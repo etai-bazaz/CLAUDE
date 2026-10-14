@@ -322,6 +322,14 @@ class EndToEndTests(Base):
         code, report = run_cli(["check"])
         self.assertEqual(code, 0, report)
         self.assertEqual(report["vapi_phone_numbers"][0]["id"], "pn-1")
+        self.assertIn("third-party calls: OPEN", report["status"])
+
+    def test_check_fails_without_key(self):
+        with mock.patch.dict(os.environ, {"VAPI_API_KEY": "", "GRAVIS_THIRD_PARTY_ENABLED": "0"}):
+            code, report = run_cli(["check"])
+        self.assertEqual(code, gc.EXIT_ERROR)
+        self.assertTrue(any("VAPI_API_KEY" in p for p in report["problems"]))
+        self.assertTrue(any("LOCKED" in s for s in report["status"]))
 
     def test_vars_and_assistant_config(self):
         code, out = run_cli(["vars", self.brief(THIRD_PARTY)])

@@ -686,10 +686,16 @@ def cmd_check(_args) -> int:
     shown = {k: cfg(k) for k in DEFAULTS}
     shown["VAPI_API_KEY"] = "set" if os.environ.get("VAPI_API_KEY") else ("via proxy" if cfg_bool("GRAVIS_KEY_VIA_PROXY") else "MISSING")
     shown["GRAVIS_OWNER_PHONE"] = mask(cfg("GRAVIS_OWNER_PHONE")) if cfg("GRAVIS_OWNER_PHONE") else "MISSING"
-    report = {"config": shown, "problems": []}
-    for name in ("GRAVIS_PHONE_NUMBER_ID", "GRAVIS_OWNER_FULL_NAME"):
+    report = {"config": shown, "problems": [], "status": []}
+    if shown["VAPI_API_KEY"] == "MISSING":
+        report["problems"].append("VAPI_API_KEY is not set (or set GRAVIS_KEY_VIA_PROXY=1 when a network secret injects it)")
+    for name in ("GRAVIS_PHONE_NUMBER_ID", "GRAVIS_OWNER_FULL_NAME", "GRAVIS_OWNER_PHONE"):
         if not cfg(name):
             report["problems"].append(f"{name} is not set")
+    if cfg_bool("GRAVIS_THIRD_PARTY_ENABLED"):
+        report["status"].append("third-party calls: OPEN")
+    else:
+        report["status"].append("third-party calls: LOCKED until gate 2 (only GRAVIS_TEST_NUMBERS can be called)")
     try:
         voice_config()
         transcriber_config()

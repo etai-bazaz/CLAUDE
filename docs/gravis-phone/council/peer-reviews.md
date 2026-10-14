@@ -1,0 +1,27 @@
+# Peer reviews (5 independent reviewers, anonymized responses A–E)
+Mapping (revealed after review): A = Expansionist, B = Contrarian, C = Outsider, D = Executor, E = First Principles.
+
+## Reviewer 1
+1. Strongest: D — the only one that turns facts into a work plan with go/no-go points; Vapi (only platform with official MCP create_call + inline assistant); +1 now for goal 1; Telnyx IL number filed first (longest step); handles 240s limit (create, then poll); falls back to Claude Code script if connector fails; full skill template; no third-party calls until caller-ID test passes. Missing: IVR hold cost (B) and whether voice is needed at all (E).
+2. Biggest blind spot: A — sells a vision (5 parallel calls, negotiation, hold-the-line) with zero safeguards: no AI disclosure, no ban on commitments, no approval before dialing, ignores prompt injection, WER, hold cost (~$0.19/min + platform), ignores 240s limit (the "call back in 10 min" loop won't work in claude.ai); WhatsApp needs a Business number.
+3. All missed: Hebrew TTS — numbers/times/names without niqqud may be read wrong ("16:00", שלוש/שלושה), so normalize text before speech; recordings at vendors — "delete after summary" doesn't delete copies at Vapi/Deepgram/ElevenLabs → disable recording/retention in platform settings; brakes — daily budget cap, allow-list, quiet hours & Shabbat (cloud runs in UTC).
+
+## Reviewer 2
+1. Strongest: D — staged, correct plan: Vapi inline assistant, official MCP, haiku-4-5; free +1 enough for goal 1; Telnyx IL in parallel; latency & transcription accuracy as go/no-go; create-then-poll; explicit gate (no third party before caller-ID test); concrete skill template. B and E sharp in diagnosis but less actionable.
+2. Biggest blind spot: A — ignores §69א, treats Telnyx IL as solved; no AI disclosure, prompt injection, transcription errors on numbers/times, hold-minute cost; parallel calls multiply exactly those risks; WhatsApp bypass is speculation.
+3. All missed: toll fraud — a key that can dial anywhere + prompt injection → premium-rate dialing; restrict destinations to Israel at provider level, maxDuration, daily call/budget cap. Spoken Hebrew, not just transcribed — gendered address to an unknown party (את/אתה), TTS reading gendered numbers, times, addresses and names from unvocalized text; test must check speech output too. The one speaking on the call is NOT Gravis — a memory-less, tool-less Haiku inside Vapi → the brief must contain all context.
+
+## Reviewer 3
+1. Strongest: D — go/no-go plan: 10 test calls to Itai (latency, transcription), Telnyx IL in parallel, third party only after caller-ID test; correct skill (approval, AI disclosure, no commitments, transcript untrusted). Missing: read-back of numbers/times (C), IVR hold cost (B).
+2. Biggest blind spot: A — parallel calls, hold, negotiation while ignoring caller-ID blocking (§69א), 10–20% WER and hold cost ($0.19+/min); "almost no risk" unfounded; WhatsApp "bypass" speculative (needs Business number + recipient consent).
+3. All missed: the speaker is not Gravis — a separate model knowing only the brief; a "decision mid-call" loop needs a webhook server nobody defined; simple return channel: end-of-call-report → Make (already connected) → Gmail/Drive, so results reach every surface incl. mobile without polling. Gendered Hebrew address (תוכל/תוכלי) — model sees only text → guaranteed embarrassment → neutral-phrasing rule. Hard caps: maxDuration, credit without auto-reload, calling hours (no Shabbat, holidays, night).
+
+## Reviewer 4
+1. Strongest: D — executable plan in order; all claims match the fact sheet; Telnyx first; go/no-go on latency & transcription; third party only after caller-ID test. B and E analyze correctly but only D gives a work plan.
+2. Biggest blind spot: A — vision without risk handling: no AI disclosure, prompt injection, transcription errors, approval before dialing; assumes Telnyx bypasses §69א untested; ignores long-hold cost; "negotiation" contradicts the no-commitment rule.
+3. All missed: the Hebrew Gravis SPEAKS (TTS) — no niqqud → times, prices, names, phone numbers may sound wrong; Hebrew numbers are gendered and the other side's gender is unknown → write numbers in words and test pronunciation. Calling hours — no calls on Shabbat, holidays, Friday afternoon, night (Israel time). Itai doesn't answer — no fallback channel (WhatsApp/email) and no safe default on timeout.
+
+## Reviewer 5
+1. Strongest: D — starts with Telnyx (longest), measurable go/no-go (latency & transcription in 10 test calls to Itai), solves 240s (create then poll), key as network secret, complete skill (approval, AI disclosure, no commitments, transcript untrusted), third party only after caller-ID test. E close; B sharpest on risks.
+2. Biggest blind spot: A — pushes the riskiest scenarios (5 parallel calls, hold, back-and-forth negotiation) with no safeguards; ignores §69א and presents Telnyx as proven; hold = 15 min at ~$0.19/min + platform with no cost cap.
+3. All missed: the fact sheet contradicts itself — per one source ElevenLabs Hebrew exists only on v3 Conversational → a Hebrew voice may not be available via Vapi at all; verify first, including how it reads times and numbers. Number tagging — Me / Truecaller are very common in Israel and may flag a new number that dials a lot as spam → register a name ("גרוויס – העוזרת של איתי"). Recordings stored at Vapi, STT vendor and ElevenLabs — "delete after summary" requires disabling retention at platform level.
